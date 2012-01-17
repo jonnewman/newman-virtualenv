@@ -1,0 +1,122 @@
+NMROOT=~/newman
+env_name=`basename $VIRTUAL_ENV`
+SRC=$NMROOT/src/
+CFG_DIR=$NMROOT/cfg/$env_name
+UNITCFG=$CFG_DIR/testing.cfg
+BASKET=http://newmandistrib:Ewt9Gleb@distrib.newmanonline.org.uk/basket
+export SRC CFG_DIR BASKET UNITCFG
+
+cdpos()
+{
+    cd $SRC/newman-compat/lib/aa/Newman/POS
+}
+
+cdbr()
+{
+    cd $SRC/newman-compat/lib/aa/Newman/Server/Branch
+}
+
+cdutil() {
+    cd $SRC/newman-compat/lib/aa/util/
+}
+
+cdvs()
+{
+    cd $SRC/newman-compat/lib/aa/Newman/Server/Venue
+}
+
+cdbo()
+{
+    cd $SRC/newman-compat/lib/aa/Newman/Web/BackOffice
+}
+
+cdbo3()
+{
+    cd $SRC/newman-backoffice/lib/newman
+}
+
+cdsrc() {
+cd $SRC
+}
+
+cdcfg() {
+cd $CFG_DIR
+}
+
+cddb() {
+cd $SRC/newman-compat/lib/aa/Newman/db
+}
+
+if [[ $OSTYPE == 'cygwin' ]]; then
+    if [ $(expr match $TERM .*rxvt.*) -gt 0 ] ||[ $(expr match $TERM .*xterm.*) -gt 0 ] || [ $(expr match $TERM screen) -gt 0 ]
+    then
+        if type rlwrap&>/dev/null
+        then
+            PYTHON="rlwrap python -i"
+        else
+            PYTHON="python -i"
+        fi
+    else
+            PYTHON="python"
+    fi
+    alias python=$PYTHON
+    alias py=`which python`
+fi
+
+pos_run(){
+CFG="$CFG_DIR/PointOfSale.cfg"
+APP_DIR=$SRC/newman-compat/lib/aa/Newman/POS
+echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
+cd $APP_DIR; $PYTHON PointOfSaleApp.py
+}
+
+vs_run(){
+CFG="$CFG_DIR/VenueServer.cfg"
+APP_DIR=$SRC/newman-compat/lib/aa/Newman/Server/Venue
+echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
+cd $APP_DIR; $PYTHON VenueServer.py
+}
+
+br_run(){
+CFG="$CFG_DIR/BranchServer.cfg"
+APP_DIR=$SRC/newman-compat/lib/aa/Newman/Server/Branch
+echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
+cd $APP_DIR; $PYTHON BranchServer.py
+}
+
+bo_run(){
+CFG="$CFG_DIR/BackOfficeServer.cfg"
+APP_DIR=$SRC/newman-compat/lib/aa/Newman/Web/BackOffice
+echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
+cp $CFG $APP_DIR
+cd $APP_DIR
+echo "making BackOffice.py from cpy files..."
+\python ../../../Cherrypy-1/cherrypy.py \
+    -I ../../../Cherrypy-1/src          \
+    -I ../../../Cherrypy-1/lib          \
+    BackOffice.cpy                      \
+    NewmanSpecialObject.cpy             \
+    Reports.cpy;                        \
+echo "building schema..."
+\python Schema2COSchema.py
+echo "start backoffice..."
+$PYTHON BackOffice.py
+}
+
+rebuild_db() {
+BR_CFG=$CFG_DIR/BranchServer.cfg
+echo $(cygpath -aw $BR_CFG) > $SRC/newman-compat/lib/aa/Newman/Server/Branch/config_file.cfg; 
+
+VS_CFG=$CFG_DIR/VenueServer.cfg
+echo $(cygpath -aw $VS_CFG) > $SRC/newman-compat/lib/aa/Newman/Server/Venue/config_file.cfg; 
+
+CFG=$CFG_DIR/testing.cfg
+
+BUILDER=newman-testing/lib/newman/testing/testdata/rebuild.py
+if [ -f "$SRC/$BUILDER" ]; then
+    $PYTHON $(cygpath -wa $SRC/$BUILDER) -c $(cygpath -wa $CFG) $@
+else
+    echo "Can't find build script: $BUILDER"
+    exit 1
+fi
+}
