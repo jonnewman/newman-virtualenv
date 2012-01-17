@@ -11,7 +11,7 @@ else
 fi
 UNITCFG=$CFG_DIR/testing.cfg
 BASKET=http://newmandistrib:Ewt9Gleb@distrib.newmanonline.org.uk/basket
-export SRC CFG_DIR BASKET UNITCFG
+export SRC CFG_DIR BASKET UNITCFG NMROOT
 
 cdpos()
 {
