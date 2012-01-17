@@ -1,7 +1,14 @@
 NMROOT=~/newman
-env_name=`basename $VIRTUAL_ENV`
+#not used
+ENV_NAME=`basename $VIRTUAL_ENV`
 SRC=$NMROOT/src/
-CFG_DIR=$NMROOT/cfg/$env_name
+GIT_BRANCH=$(pushd $SRC > /dev/null && git name-rev --name-only HEAD 2>/dev/null && popd > /dev/null)
+if [ -z "$GIT_BRANCH" ]
+then
+    CFG_DIR=$NMROOT/cfg/default
+else
+    CFG_DIR=$NMROOT/cfg/$GIT_BRANCH
+fi
 UNITCFG=$CFG_DIR/testing.cfg
 BASKET=http://newmandistrib:Ewt9Gleb@distrib.newmanonline.org.uk/basket
 export SRC CFG_DIR BASKET UNITCFG
@@ -67,21 +74,27 @@ pos_run(){
 CFG="$CFG_DIR/PointOfSale.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/POS
 echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
-cd $APP_DIR; $PYTHON PointOfSaleApp.py
+pushd $APP_DIR > /dev/null
+$PYTHON PointOfSaleApp.py
+popd > /dev/null
 }
 
 vs_run(){
 CFG="$CFG_DIR/VenueServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Server/Venue
 echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
-cd $APP_DIR; $PYTHON VenueServer.py
+pushd $APP_DIR > /dev/null
+$PYTHON VenueServer.py
+popd > /dev/null
 }
 
 br_run(){
 CFG="$CFG_DIR/BranchServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Server/Branch
 echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
-cd $APP_DIR; $PYTHON BranchServer.py
+pushd $APP_DIR > /dev/null
+$PYTHON BranchServer.py
+popd > /dev/null
 }
 
 bo_run(){
@@ -89,7 +102,7 @@ CFG="$CFG_DIR/BackOfficeServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Web/BackOffice
 echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
 cp $CFG $APP_DIR
-cd $APP_DIR
+pushd $APP_DIR > /dev/null
 echo "making BackOffice.py from cpy files..."
 \python ../../../Cherrypy-1/cherrypy.py \
     -I ../../../Cherrypy-1/src          \
@@ -101,6 +114,7 @@ echo "building schema..."
 \python Schema2COSchema.py
 echo "start backoffice..."
 $PYTHON BackOffice.py
+popd > /dev/null
 }
 
 rebuild_db() {
