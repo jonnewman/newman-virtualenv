@@ -3,7 +3,7 @@ NMROOT=~/newman
 ENV_NAME=`basename $VIRTUAL_ENV`
 SRC=$NMROOT/src/
 GIT_BRANCH=$(pushd $SRC > /dev/null && git name-rev --name-only HEAD 2>/dev/null && popd > /dev/null)
-if [ -z "$GIT_BRANCH" ]
+if [ -z "$GIT_BRANCH" ] || [ ! -d $NMROOT/cfg/$GIT_BRANCH ]
 then
     CFG_DIR=$NMROOT/cfg/default
 else
