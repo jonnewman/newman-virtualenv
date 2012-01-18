@@ -134,3 +134,18 @@ else
     exit 1
 fi
 }
+
+unpack_eggs(){
+for i in `find . ! -name . -prune -type f | grep "./*.egg$"`;
+do
+    echo $is
+    j=${i%.egg}.zip
+    mv $i $j
+    mkdir $i
+    mv $j $i
+    cd $i
+    7za x $j
+    rm $j
+    cd ..
+done
+}
