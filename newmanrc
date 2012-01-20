@@ -32,14 +32,14 @@ cdvs()
     cd $SRC/newman-compat/lib/aa/Newman/Server/Venue
 }
 
-cdbo()
+cdbo0()
 {
     cd $SRC/newman-compat/lib/aa/Newman/Web/BackOffice
 }
 
-cdbo3()
+cdbo()
 {
-    cd $SRC/newman-backoffice/lib/newman
+    cd $SRC/newman-backoffice/lib/newman/backoffice
 }
 
 cdsrc() {
