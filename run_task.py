@@ -3,7 +3,7 @@ import hashlib
 from xml.etree import ElementTree
 
 user = 'system'
-passwd = hashlib.md5('cudOgNowt').hexdigest()
+passwd = hashlib.md5('MAc8E3he').hexdigest()
 
 
 def get_external_uri():
