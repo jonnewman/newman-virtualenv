@@ -98,6 +98,14 @@ popd > /dev/null
 }
 
 bo_run(){
+pushd $SRC/newman-backoffice  > /dev/null
+\python bin/convert.py
+cd $SRC/newman-backoffice/lib/newman/backoffice
+python webapp.py
+popd > /dev/null
+}
+
+bo0_run(){
 CFG="$CFG_DIR/BackOfficeServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Web/BackOffice
 echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
