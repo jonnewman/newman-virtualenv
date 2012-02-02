@@ -24,7 +24,7 @@ def run_venue_task(venue_uri):
     sess, _ = venue_server.user.login(user, passwd)
     #venue_server.tasks.createDirectDebitAccounts(sess)
     venue_server.tasks.chargeDirectDebitAccounts(sess)
-    #venue_server.tasks.renewDirectDebitCustomerMemberships(sess)
+    venue_server.tasks.renewDirectDebitCustomerMemberships(sess)
     #venue_server.tasks.calcDirectDebitNextChargeDate(sess)
 
 if __name__ == '__main__':
