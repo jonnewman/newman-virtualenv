@@ -66,35 +66,39 @@ pos_run(){
 CFG="$CFG_DIR/PointOfSale.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/POS
 echo -E $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
-pushd $APP_DIR > /dev/null
+_OLD_PWD=$PWD
+cd $APP_DIR > /dev/null
 python PointOfSaleApp.py
-popd > /dev/null
+cd $_OLD_PWD
 }
 
 vs_run(){
 CFG="$CFG_DIR/VenueServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Server/Venue
 echo -E $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
-pushd $APP_DIR > /dev/null
+_OLD_PWD=$PWD
+cd $APP_DIR > /dev/null
 python VenueServer.py
-popd > /dev/null
+cd $_OLD_PWD
 }
 
 br_run(){
 CFG="$CFG_DIR/BranchServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Server/Branch
 echo -E $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
-pushd $APP_DIR > /dev/null
+_OLD_PWD=$PWD
+cd $APP_DIR > /dev/null
 python BranchServer.py
-popd > /dev/null
+cd $_OLD_PWD
 }
 
 bo_run(){
-pushd $SRC/newman-backoffice  > /dev/null
+_OLD_PWD=$PWD
+cd $SRC/newman-backoffice  > /dev/null
 \python bin/convert.py
 cd $SRC/newman-backoffice/lib/newman/backoffice
 python webapp.py
-popd > /dev/null
+cd $_OLD_PWD
 }
 
 bo0_run(){
@@ -102,7 +106,7 @@ CFG="$CFG_DIR/BackOfficeServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Web/BackOffice
 echo -E $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
 cp $CFG $APP_DIR
-pushd $APP_DIR > /dev/null
+_OLD_PWD=$PWD
 echo "making BackOffice.py from cpy files..."
 \python ../../../Cherrypy-1/cherrypy.py \
     -I ../../../Cherrypy-1/src          \
@@ -114,7 +118,7 @@ echo "building schema..."
 \python Schema2COSchema.py
 echo "start backoffice..."
 python BackOffice.py
-popd > /dev/null
+cd $_OLD_PWD
 }
 
 rebuild_db() {
