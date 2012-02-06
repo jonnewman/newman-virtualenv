@@ -25,8 +25,7 @@ cdutil() {
     cd $SRC/newman-compat/lib/aa/util/
 }
 
-cdvs()
-{
+cdvs(){
     cd $SRC/newman-compat/lib/aa/Newman/Server/Venue
 }
 
@@ -35,26 +34,17 @@ cdbo0()
     cd $SRC/newman-compat/lib/aa/Newman/Web/BackOffice
 }
 
-cdbo()
-{
+cdbo() {
     cd $SRC/newman-backoffice/lib/newman/backoffice
 }
 
-cdsrc() {
-cd $SRC
-}
+cdsrc() { cd $SRC; }
 
-cdcfg() {
-cd $CFG_DIR
-}
+cdcfg() { cd $CFG_DIR; }
 
-cddb() {
-cd $SRC/newman-compat/lib/aa/Newman/db
-}
+cddb() { cd $SRC/newman-compat/lib/aa/Newman/db; }
 
-match() {
-echo $1 | egrep $2 > /dev/null
-}
+match() { echo $1 | egrep $2 > /dev/null; }
 
 if [[ $OSTYPE == 'cygwin' ]]; then
     if match $TERM rxvt || match $TERM xterm || match $TERM screen
@@ -77,7 +67,7 @@ CFG="$CFG_DIR/PointOfSale.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/POS
 echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
 pushd $APP_DIR > /dev/null
-$PYTHON PointOfSaleApp.py
+python PointOfSaleApp.py
 popd > /dev/null
 }
 
@@ -86,7 +76,7 @@ CFG="$CFG_DIR/VenueServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Server/Venue
 echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
 pushd $APP_DIR > /dev/null
-$PYTHON VenueServer.py
+python VenueServer.py
 popd > /dev/null
 }
 
@@ -95,7 +85,7 @@ CFG="$CFG_DIR/BranchServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Server/Branch
 echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
 pushd $APP_DIR > /dev/null
-$PYTHON BranchServer.py
+python BranchServer.py
 popd > /dev/null
 }
 
@@ -123,7 +113,7 @@ echo "making BackOffice.py from cpy files..."
 echo "building schema..."
 \python Schema2COSchema.py
 echo "start backoffice..."
-$PYTHON BackOffice.py
+python BackOffice.py
 popd > /dev/null
 }
 
@@ -138,7 +128,7 @@ CFG=$CFG_DIR/testing.cfg
 
 BUILDER=newman-testing/lib/newman/testing/testdata/rebuild.py
 if [ -f "$SRC/$BUILDER" ]; then
-    $PYTHON $(cygpath -wa $SRC/$BUILDER) -c $(cygpath -wa $CFG) $@
+    python $(cygpath -wa $SRC/$BUILDER) -c $(cygpath -wa $CFG) $@
 else
     echo "Can't find build script: $BUILDER"
     exit 1
