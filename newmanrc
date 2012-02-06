@@ -54,8 +54,10 @@ cddb() {
 cd $SRC/newman-compat/lib/aa/Newman/db
 }
 
+match() { echo $1 | egrep $2 > /dev/null }
+
 if [[ $OSTYPE == 'cygwin' ]]; then
-    if [ $(expr match $TERM .*rxvt.*) -gt 0 ] ||[ $(expr match $TERM .*xterm.*) -gt 0 ] || [ $(expr match $TERM screen) -gt 0 ]
+    if match $TERM rxvt || match $TERM xterm || match $TERM screen
     then
         if type rlwrap&>/dev/null
         then
