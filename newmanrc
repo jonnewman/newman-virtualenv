@@ -65,7 +65,7 @@ fi
 pos_run(){
 CFG="$CFG_DIR/PointOfSale.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/POS
-echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
+echo -E $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
 pushd $APP_DIR > /dev/null
 python PointOfSaleApp.py
 popd > /dev/null
@@ -74,7 +74,7 @@ popd > /dev/null
 vs_run(){
 CFG="$CFG_DIR/VenueServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Server/Venue
-echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
+echo -E $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
 pushd $APP_DIR > /dev/null
 python VenueServer.py
 popd > /dev/null
@@ -83,7 +83,7 @@ popd > /dev/null
 br_run(){
 CFG="$CFG_DIR/BranchServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Server/Branch
-echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
+echo -E $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
 pushd $APP_DIR > /dev/null
 python BranchServer.py
 popd > /dev/null
@@ -100,7 +100,7 @@ popd > /dev/null
 bo0_run(){
 CFG="$CFG_DIR/BackOfficeServer.cfg"
 APP_DIR=$SRC/newman-compat/lib/aa/Newman/Web/BackOffice
-echo $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
+echo -E $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
 cp $CFG $APP_DIR
 pushd $APP_DIR > /dev/null
 echo "making BackOffice.py from cpy files..."
@@ -119,10 +119,10 @@ popd > /dev/null
 
 rebuild_db() {
 BR_CFG=$CFG_DIR/BranchServer.cfg
-echo $(cygpath -aw $BR_CFG) > $SRC/newman-compat/lib/aa/Newman/Server/Branch/config_file.cfg; 
+echo -E $(cygpath -aw $BR_CFG) > $SRC/newman-compat/lib/aa/Newman/Server/Branch/config_file.cfg; 
 
 VS_CFG=$CFG_DIR/VenueServer.cfg
-echo $(cygpath -aw $VS_CFG) > $SRC/newman-compat/lib/aa/Newman/Server/Venue/config_file.cfg; 
+echo -E $(cygpath -aw $VS_CFG) > $SRC/newman-compat/lib/aa/Newman/Server/Venue/config_file.cfg; 
 
 CFG=$CFG_DIR/testing.cfg
 
