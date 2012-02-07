@@ -1,16 +1,30 @@
 NMROOT=~/newman
-SRC=$NMROOT/src/
-GIT_BRANCH=$(pushd $SRC > /dev/null && git name-rev --name-only HEAD 2>/dev/null && popd > /dev/null)
-if [ -z "$GIT_BRANCH" ] || [ ! -d $NMROOT/cfg/$GIT_BRANCH ]
+ENV_NAME=$(basename $VIRTUAL_ENV)
+if [ -n "$ENV_NAME" ] && [ -d $NMROOT/cfg/$ENV_NAME ]
 then
-    CFG_DIR=$NMROOT/cfg/default
+    CFG_DIR=$NMROOT/cfg/$ENV_NAME
 else
-    CFG_DIR=$NMROOT/cfg/$GIT_BRANCH
+    CFG_DIR=$NMROOT/cfg/default
+fi
+if [ -n "$ENV_NAME" ] && [ -d $NMROOT/src/$ENV_NAME ]
+then
+    SRC=$NMROOT/src/$ENV_NAME
+else
+    SRC=$NMROOT/src/default
 fi
 UNITCFG=$CFG_DIR/testing.cfg
 BASKET=http://newmandistrib:Ewt9Gleb@distrib.newmanonline.org.uk/basket
-export SRC CFG_DIR BASKET UNITCFG NMROOT
+PYTHON_EGG_CACHE=$NMROOT/var/egg-cache/$ENV_NAME
+if [ ! -d "$PYTHON_EGG_CACHE" ]
+then
+    mkdir -p $PYTHON_EGG_CACHE
+fi
+export SRC CFG_DIR BASKET UNITCFG NMROOT PYTHON_EGG_CACHE
 
+cdnm()
+{
+    cd $NMROOT
+}
 cdpos()
 {
     cd $SRC/newman-compat/lib/aa/Newman/POS
@@ -57,7 +71,6 @@ if [[ $OSTYPE == 'cygwin' ]]; then
             PYTHON="python"
     fi
     alias python=$PYTHON
-    alias py=$(which python)
 fi
 
 pos_run(){
@@ -150,4 +163,17 @@ do
     rm $j
     cd ..
 done
+}
+
+nm_package_link(){
+old_pwd=$PWD
+site_packages="`virtualenvwrapper_get_site_packages_dir`"
+\cd $site_packages
+for pkg in $(\ls $SRC | grep newman- ) 
+do
+    echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" > "$pkg.egg-link"
+    echo -E "../" >> "$pkg.egg-link"
+    echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" >> easy-install.pth
+done
+cd $old_pwd
 }
