@@ -9,7 +9,9 @@ PACKAGES = {
     'mx':'egenix-mx-base-3.1.3.win32-py2.6.msi', 
     'wx':  'wxPython-2.8.11.0-py2.6-win32.exe',
     'win32api': 'pywin32-213.win32-py2.6.exe',
-    'pyodbc': 'pyodbc-2.1.8.win32-py2.6.exe'
+    'pyodbc': 'pyodbc-2.1.8.win32-py2.6.exe',
+    'twisted': 'Twisted-10.1.0.winxp32-py2.6.exe',
+    'PIL': 'PIL-1.1.6-py2.6.win32.zip',
     }
 
 def wget(url, download_dir='.'):
@@ -78,23 +80,21 @@ def install_windows_packages():
                 missing_package.append(installer)
                 failed_install.append(installer)
                 continue
-            if installer.endswith('exe'):
+            if installer[-4:] == 'exe':
                 #exe file try easy_install first of all
                 returncode = easy_install(full_path)
                 if returncode != 0:
                     print '*easy_install %s failed.' %installer
                     print 'now try to handle it as an installer created by Inno Setup'
                     returncode = install_innosetup_installer(full_path)
-                    if returncode == 0:
-                        print 'install %s as an Inno Setup installer succeed!' %installer
-                    else:
-                        failed_install.append(installer)
-            elif installer.endswith('msi'):
+            elif installer[-4:] in ['.zip', '.egg']:
+                returncode = easy_install(full_path)
+            elif installer[-4:] == 'msi':
                 returncode = install_msi(full_path)
-                if returncode == 0:
-                    print 'install msi file %s succeed!' %installer
-                else:
-                    failed_install.append(installer)
+            if returncode == 0:
+                print 'install file %s succeed!' %installer
+            else:
+                failed_install.append(installer)
     if failed_install:
         print '!failed to install package(s) %s' %failed_install
     if missing_package:
