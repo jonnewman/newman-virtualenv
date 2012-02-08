@@ -12,6 +12,8 @@ PACKAGES = {
     'pyodbc': 'pyodbc-2.1.8.win32-py2.6.exe',
     'twisted': 'Twisted-10.1.0.winxp32-py2.6.exe',
     'PIL': 'PIL-1.1.6-py2.6.win32.zip',
+    'comtypes': 'comtypes-0.6.2.win32.exe',
+    'lxml': 'lxml-2.3-py2.6-win32.egg'
     }
 
 def wget(url, download_dir='.'):
@@ -80,17 +82,19 @@ def install_windows_packages():
                 missing_package.append(installer)
                 failed_install.append(installer)
                 continue
-            if installer[-4:] == 'exe':
+            if installer[-4:] == '.exe':
                 #exe file try easy_install first of all
                 returncode = easy_install(full_path)
                 if returncode != 0:
                     print '*easy_install %s failed.' %installer
                     print 'now try to handle it as an installer created by Inno Setup'
                     returncode = install_innosetup_installer(full_path)
-            elif installer[-4:] in ['.zip', '.egg']:
+            elif installer[-4:] in ['.zip', '.egg', '.tgz'] or installer[-7:] == '.tar.gz':
                 returncode = easy_install(full_path)
-            elif installer[-4:] == 'msi':
+            elif installer[-4:] == '.msi':
                 returncode = install_msi(full_path)
+            else:
+                returncode = 1
             if returncode == 0:
                 print 'install file %s succeed!' %installer
             else:
