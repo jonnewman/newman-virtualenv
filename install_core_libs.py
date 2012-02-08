@@ -1,10 +1,11 @@
 #--encode utf-8
 import os
+import re
 import sys
 import subprocess
 import urllib
 
-PACKAGES = {
+WINDOWS_PACKAGES = {
     'Crypto': 'pycrypto-2.3.win32-py2.6.msi',
     'mx':'egenix-mx-base-3.1.3.win32-py2.6.msi', 
     'wx':  'wxPython-2.8.11.0-py2.6-win32.exe',
@@ -12,7 +13,6 @@ PACKAGES = {
     'pyodbc': 'pyodbc-2.1.8.win32-py2.6.exe',
     'twisted': 'Twisted-10.1.0.winxp32-py2.6.exe',
     'PIL': 'PIL-1.1.6-py2.6.win32.zip',
-    'comtypes': 'comtypes-0.6.2.win32.exe',
     'lxml': 'lxml-2.3-py2.6-win32.egg'
     }
 
@@ -49,6 +49,11 @@ def get_installer(name):
     else:
         return True, full_path
 
+def pip_install(resource):
+    child = subprocess.Popen(['pip', 'install', resource])
+    child.communicate()
+    return child.returncode
+
 def easy_install(full_path):
     child = subprocess.Popen(['easy_install', full_path])
     child.communicate()
@@ -66,16 +71,38 @@ def install_msi(full_path):
     child.communicate()
     return child.returncode
 
-def install_windows_packages():
+def install_packages(pkgs):
     failed_install = []
-    missing_package = []
-    for namespace in PACKAGES:
+    for namespace in pkgs:
         print '=' * 40
         try:
             exec 'import %s' %namespace
             print '"%s" already installed' %namespace
-        except ImportError:
-            installer = PACKAGES[namespace]
+        except (ImportError, SyntaxError):
+            resource = pkgs[namespace]
+            if resource.startswith('-e') or\
+            resource.startswith('svn') or\
+            resource.startswith('git') or\
+            resource.startswith('hg'):
+                returncode = pip_install(resource)
+            else:
+                returncode = easy_install(resource)
+                if returncode != 0:
+                    returncode = pip_install(resource)
+            if returncode != 0:
+                failed_install.append(resource)
+    return failed_install
+    
+def install_windows_binaries(pkgs):
+    failed_install = []
+    missing_package = []
+    for namespace in pkgs:
+        print '=' * 40
+        try:
+            exec 'import %s' %namespace
+            print '"%s" already installed' %namespace
+        except (ImportError, SyntaxError):
+            installer = pkgs[namespace]
             print 'install "%s" ' %installer
             succeed, full_path = get_installer(installer)
             if not succeed:
@@ -99,14 +126,67 @@ def install_windows_packages():
                 print 'install file %s succeed!' %installer
             else:
                 failed_install.append(installer)
+    return failed_install, missing_package
+
+def parse_arg():
+    try:
+        file_name = sys.argv[1]
+        if os.path.exists(file_name):
+            return file_name
+        else:
+            return None
+    except IndexError:
+        return None
+
+def strip_version_info(pkg):
+    pat = re.compile('(^.*?)(==|>=)(.*$)')
+    mat = pat.match(pkg)
+    if mat:
+        pkg = mat.groups()[0]
+    return pkg
+
+def process_requirement_file(file_name):
+    pkgs = {}
+    if file_name:
+        f = open(file_name, 'rb')
+        for line in f:
+            line = line.strip()
+            #comment
+            if line.startswith('#'):
+                continue
+            elif line.startswith('-e'):
+                #-e ../newman-crypto
+                #-e .
+                if 'newman-' in line or line == '-e .':
+                    continue
+                else:
+                    pkgs[line] = line
+            elif 'newman-' in line:
+                continue
+            else:
+                try:
+                    namespace, resource = line.split(',')
+                except ValueError:
+                    namespace = resource = line
+                namespace = strip_version_info(namespace)
+                pkgs[namespace] = resource
+    return pkgs
+
+def main():
+    file_name = parse_arg()
+    pkgs = process_requirement_file(file_name)
+    failed_install = []
+    missing_package = []
+    if sys.platform == 'win32':
+        failed, missing = install_windows_binaries(WINDOWS_PACKAGES)
+        failed_install.extend(failed)
+        missing_package.extend(missing)
+    failed = install_packages(pkgs)
+    failed_install.extend(failed)
     if failed_install:
         print '!failed to install package(s) %s' %failed_install
     if missing_package:
         print '!could not find package(s) %s from %s' % (missing_package, BASKET)
-
-def main():
-    if sys.platform == 'win32':
-        install_windows_packages()
 
 if __name__ == '__main__':
     main()
