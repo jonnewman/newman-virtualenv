@@ -118,6 +118,7 @@ APP_DIR=$SRC/newman-compat/lib/aa/Newman/Web/BackOffice
 echo -E $(cygpath -wa $CFG) > $APP_DIR/config_file.cfg
 cp $CFG $APP_DIR
 _OLD_PWD=$PWD
+cd $APP_DIR
 echo "making BackOffice.py from cpy files..."
 \python ../../../Cherrypy-1/cherrypy.py \
     -I ../../../Cherrypy-1/src          \
@@ -174,6 +175,18 @@ do
     echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" > "$pkg.egg-link"
     echo -E "../" >> "$pkg.egg-link"
     echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" >> easy-install.pth
+done
+cd $old_pwd
+}
+
+nm_package_install_depencency(){
+old_pwd=$PWD
+cd $SRC
+for pkg in $(\ls $SRC | grep newman- ) 
+do
+    cd $pkg
+    \python setup.py develop
+    cd ..
 done
 cd $old_pwd
 }
