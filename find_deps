@@ -1,14 +1,30 @@
+IGNORED_PKGS=("newman-accountservice" "newman-cms" \
+"newman-installer" "newman-mail" "newman-mailserver" "newman-webapps")
+
 old_pwd=$PWD
 cd $SRC
 for i in `\ls | grep newman-`
 do 
+    ignored=false
+    for j in "${IGNORED_PKGS[@]}"
+    do 
+        if [[ "$j" == "$i" ]]
+        then
+            ignored=true
+            break
+        fi
+    done
+    if $ignored
+    then
+        continue
+    fi
     cd $i
     echoed=false
     if [ -f setup.py ] && [ -f __metadata__.py ] 
     then
         echo \#$i
         echoed=true
-        echo -en $(\python -c "import sys, __metadata__; sys.stdout.write(r'\n'.join(__metadata__.data.get('python_dependencies') or __metadata__.data.get('python_packages'))); sys.stdout.flush()")
+        echo -en $(\python -c "import sys, __metadata__; sys.stdout.write(r'\n'.join(__metadata__.data.get('python_dependencies', []) or __metadata__.data.get('python_packages', []))); sys.stdout.flush()")
     fi
     if [ -f requirements.txt ]
     then
