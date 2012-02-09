@@ -13,7 +13,8 @@ WINDOWS_PACKAGES = {
     'pyodbc': 'pyodbc-2.1.8.win32-py2.6.exe',
     'twisted': 'Twisted-10.1.0.winxp32-py2.6.exe',
     'PIL': 'PIL-1.1.6-py2.6.win32.zip',
-    'lxml': 'lxml-2.3-py2.6-win32.egg'
+    'lxml': 'lxml-2.3-py2.6-win32.egg',
+    'netifaces': 'netifaces-0.5-py2.6-win32.egg'
     }
 
 def wget(url, download_dir='.'):
