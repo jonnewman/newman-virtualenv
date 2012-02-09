@@ -1,0 +1,30 @@
+old_pwd=$PWD
+cd $SRC
+for i in `\ls | grep newman-`
+do 
+    cd $i
+    echoed=false
+    if [ -f setup.py ] && [ -f __metadata__.py ] 
+    then
+        echo \#$i
+        echoed=true
+        echo -en $(\python -c "import sys, __metadata__; sys.stdout.write(r'\n'.join(__metadata__.data.get('python_dependencies') or __metadata__.data.get('python_packages'))); sys.stdout.flush()")
+    fi
+    if [ -f requirements.txt ]
+    then
+        if ! $echoed
+        then
+            echo \#$i
+            echoed=true
+        else
+            echo
+        fi
+        cat requirements.txt
+    fi
+    if $echoed
+    then
+        echo -e "\n"
+    fi
+    cd ..
+done 
+cd $old_pwd
