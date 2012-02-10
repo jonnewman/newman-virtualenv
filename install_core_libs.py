@@ -37,8 +37,10 @@ if sys.platform == 'win32':
 else:
     NMROOT = os.environ['NMROOT']
     SITE_PACKAGES_DIR = os.path.join(os.environ['VIRTUAL_ENV'], 'lib/site-packages')
-BASKET = os.environ['BASKET']
+BASKET = os.environ.get('BASKET', 'http://newmandistrib:Ewt9Gleb@distrib.newmanonline.org.uk/basket')
 DOWNLOAD_DIR = os.path.join(NMROOT, 'var//download')
+if not os.path.exists(DOWNLOAD_DIR):
+    os.makedirs(DOWNLOAD_DIR)
 
 def get_installer(name):
     print 'get installer "%s"' %name
@@ -59,8 +61,8 @@ def pip_install(resource):
     child.communicate()
     return child.returncode
 
-def easy_install(full_path):
-    child = subprocess.Popen(['easy_install', full_path])
+def easy_install(resource):
+    child = subprocess.Popen(['easy_install', '-f' , BASKET, resource])
     child.communicate()
     return child.returncode
 
@@ -179,9 +181,13 @@ def process_requirement_file(file_name):
                 pkgs[namespace] = resource
     return pkgs
 
+def add_newman_pkgs_to_python_path():
+    pass
+
 def main():
     file_name = parse_arg()
     pkgs = process_requirement_file(file_name)
+    add_newman_pkgs_to_python_path()
     failed_install = []
     missing_package = []
     if sys.platform == 'win32':
