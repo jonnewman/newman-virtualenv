@@ -170,17 +170,18 @@ nm_package_link(){
 old_pwd=$PWD
 site_packages="`virtualenvwrapper_get_site_packages_dir`"
 \cd $site_packages
+echo -n "" > newman.pth
 for pkg in $(\ls $SRC | grep newman- ) 
 do
     if is_cygwin_win32py
     then
         echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" > "$pkg.egg-link"
         echo -E "../" >> "$pkg.egg-link"
-        echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" >> easy-install.pth
+        echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" >> newman.pth
     else
         echo -E "$SRC/$pkg/lib" > "$pkg.egg-link"
         echo -E "../" >> "$pkg.egg-link"
-        echo -E "$SRC/$pkg/lib" >> easy-install.pth
+        echo -E "$SRC/$pkg/lib" >> newman.pth
     fi
 done
 cd $old_pwd
