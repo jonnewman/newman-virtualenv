@@ -31,10 +31,14 @@ def cygpath(path):
     path=subprocess.Popen(['cygpath', '-wa', path], stdout=subprocess.PIPE).communicate()[0].strip()
     return path
 
+if sys.platform == 'win32':
+    NMROOT = cygpath(os.environ['NMROOT'])
+    SITE_PACKAGES_DIR = cygpath(os.path.join(os.environ['VIRTUAL_ENV'], 'lib/site-packages'))
+else:
+    NMROOT = os.environ['NMROOT']
+    SITE_PACKAGES_DIR = os.path.join(os.environ['VIRTUAL_ENV'], 'lib/site-packages')
 BASKET = os.environ['BASKET']
-NMROOT = cygpath(os.environ['NMROOT'])
 DOWNLOAD_DIR = os.path.join(NMROOT, 'var//download')
-SITE_PACKAGES_DIR = cygpath(os.path.join(os.environ['VIRTUAL_ENV'], 'lib/site-packages'))
 
 def get_installer(name):
     print 'get installer "%s"' %name

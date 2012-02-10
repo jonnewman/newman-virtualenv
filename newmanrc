@@ -172,9 +172,16 @@ site_packages="`virtualenvwrapper_get_site_packages_dir`"
 \cd $site_packages
 for pkg in $(\ls $SRC | grep newman- ) 
 do
-    echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" > "$pkg.egg-link"
-    echo -E "../" >> "$pkg.egg-link"
-    echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" >> easy-install.pth
+    if is_cygwin_win32py
+    then
+        echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" > "$pkg.egg-link"
+        echo -E "../" >> "$pkg.egg-link"
+        echo -E "$(cygpath -wa $SRC)\\$pkg\\lib" >> easy-install.pth
+    else
+        echo -E "$SRC/$pkg/lib" > "$pkg.egg-link"
+        echo -E "../" >> "$pkg.egg-link"
+        echo -E "$SRC/$pkg/lib" >> easy-install.pth
+    fi
 done
 cd $old_pwd
 }
