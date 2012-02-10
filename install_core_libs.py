@@ -164,6 +164,8 @@ def process_requirement_file(file_name):
                     pkgs[line] = line
             elif 'newman-' in line:
                 continue
+            elif not line:
+                continue
             else:
                 try:
                     namespace, resource = line.split(',')
@@ -187,7 +189,7 @@ def main():
     if failed_install:
         print '!failed to install package(s) %s' %failed_install
     if missing_package:
-        print '!could not find package(s) %s from %s' % (missing_package, BASKET)
+        print '!could not find package(s) %s from the basket %s' % (missing_package, BASKET)
 
 if __name__ == '__main__':
     main()

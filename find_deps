@@ -1,5 +1,6 @@
 IGNORED_PKGS=("newman-accountservice" "newman-cms" \
-"newman-installer" "newman-mail" "newman-mailserver" "newman-webapps")
+"newman-installer" "newman-mail" "newman-mailserver" \
+"newman-webapps" "newman-webpresence")
 
 old_pwd=$PWD
 cd $SRC
