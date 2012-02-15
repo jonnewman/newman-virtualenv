@@ -203,8 +203,8 @@ update_config_file_ip_address(){
 ipaddr=$(\python -c "import socket, sys; sys.stdout.write(socket.gethostbyname(socket.gethostname())); sys.stdout.flush()")
 #[venueservers] in BranchServer.cfg
 cat $CFG_DIR/BranchServer.cfg | sed -e "s/[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\(\$[0-9]*\|\)\(\s\|\)=\(\s\|\)bmnt/$ipaddr=bmnt/g" > $CFG_DIR/BranchServer.cfg
-}
 #[pos] in VenueServer.cfg
 cat $CFG_DIR/VenueServer.cfg | sed -e "s/[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\(\$[0-9]*\|\)\(\s\|\)=\(\s\|\)bm1/$ipaddr=bm1/g" > $CFG_DIR/VenueServer.cfg
 #[setup.branchserverip] in VenueServer.cfg
 cat $CFG_DIR/VenueServer.cfg | sed -e "s/^branchserverip\(\s\|\)=\(\s\|\)\(.*\)$/branchserverip=$ipaddr/g" > $CFG_DIR/VenueServer.cfg
+}
