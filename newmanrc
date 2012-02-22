@@ -187,18 +187,6 @@ done
 cd $old_pwd
 }
 
-nm_package_install_depencency(){
-old_pwd=$PWD
-cd $SRC
-for pkg in $(\ls $SRC | grep newman- ) 
-do
-    cd $pkg
-    \python setup.py develop
-    cd ..
-done
-cd $old_pwd
-}
-
 update_config_file_ip_address(){
 ipaddr=$(\python -c "import socket, sys; sys.stdout.write(socket.gethostbyname(socket.gethostname())); sys.stdout.flush()")
 #[venueservers] in BranchServer.cfg
