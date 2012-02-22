@@ -200,6 +200,8 @@ def main():
         print '!failed to install package(s) %s' %failed_install
     if missing_package:
         print '!could not find package(s) %s from the basket %s' % (missing_package, BASKET)
+    if not failed_install and not missing_package:
+        print 'lucky you! we have got to the end with everything installed!'
 
 if __name__ == '__main__':
     main()
