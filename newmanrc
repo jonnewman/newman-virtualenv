@@ -105,8 +105,6 @@ cd $_OLD_PWD
 
 bo_run(){
 _OLD_PWD=$PWD
-cd $SRC/newman-backoffice  > /dev/null
-\python bin/convert.py
 cd $SRC/newman-backoffice/lib/newman/backoffice
 python webapp.py
 cd $_OLD_PWD
