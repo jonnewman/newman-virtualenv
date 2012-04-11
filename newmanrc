@@ -14,7 +14,12 @@ else
 fi
 UNITCFG=$CFG_DIR/testing.cfg
 BASKET=http://newmandistrib:Ewt9Gleb@distrib.newmanonline.org.uk/basket
-PYTHON_EGG_CACHE=$NMROOT/var/egg-cache/$ENV_NAME
+if is_cygwin_win32py
+then
+    PYTHON_EGG_CACHE=$(cygpath -wa $NMROOT/var/egg-cache/$ENV_NAME)
+else
+    PYTHON_EGG_CACHE=$NMROOT/var/egg-cache/$ENV_NAME
+fi
 if [ ! -d "$PYTHON_EGG_CACHE" ]
 then
     mkdir -p $PYTHON_EGG_CACHE
@@ -105,8 +110,10 @@ cd $_OLD_PWD
 
 bo_run(){
 _OLD_PWD=$PWD
-cd $SRC/newman-backoffice/lib/newman/backoffice
-python webapp.py
+CFG="$CFG_DIR/BackOfficeServer.cfg"
+APP_DIR=$SRC/newman-backoffice/lib/newman/backoffice
+cd $APP_DIR > /dev/null
+python webapp.py --config=$(cygpath -wa $CFG)
 cd $_OLD_PWD
 }
 
