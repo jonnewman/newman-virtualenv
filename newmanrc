@@ -113,7 +113,12 @@ _OLD_PWD=$PWD
 CFG="$CFG_DIR/BackOfficeServer.cfg"
 APP_DIR=$SRC/newman-backoffice/lib/newman/backoffice
 cd $APP_DIR > /dev/null
-python webapp.py --config=$(cygpath -wa $CFG)
+if is_cygwin_win32py
+then
+    python webapp.py --config=$(cygpath -wa $CFG)
+else
+    python webapp.py --config=$CFG
+fi
 cd $_OLD_PWD
 }
 
